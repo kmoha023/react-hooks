@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useRef, useReducer } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import Card from '../UI/Card';
 import './Search.css';
 import useHttp from "../../hooks/useHttp";
-import ingredientsReducer from "../../reducer/ingredientsReducer";
+import ErrorModal from "../UI/ErrorModal";
 
 const Search = React.memo(props => {
-    const {httpState, sendRequest} = useHttp();
-    const [userIngredients, dispatchIng] = useReducer(ingredientsReducer, []);
+    const {httpState, clear, sendRequest} = useHttp();
     const [filterTitle, setFilterTitle] = useState('')
     const inputRef = useRef();
     const {isLoading, error, responseData, extraData, reqIdentifier } = {...httpState}
@@ -42,7 +41,7 @@ const Search = React.memo(props => {
                 setUserIngredients(ingList);
             }
         }
-    }, [responseData, reqIdentifier, isLoading])
+    }, [responseData, reqIdentifier, isLoading, setUserIngredients])
 
     useEffect( () => {
         console.log('[EFFECT...]');
@@ -101,9 +100,11 @@ const Search = React.memo(props => {
 
   return (
     <section className="search">
+        {error && <ErrorModal onClose={clear}>{error}</ErrorModal>}
       <Card>
         <div className="search-input">
           <label>Filter by Title</label>
+            {isLoading && <span>Loading...</span>}
           <input type="text" value={filterTitle} ref={inputRef}  onChange={event => setFilterTitle(event.target.value)}/>
         </div>
       </Card>

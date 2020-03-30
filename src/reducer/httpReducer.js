@@ -22,6 +22,11 @@ const httpReducer = (httpState, action) => {
                 ...httpState,
                 extraData: action.extraData
             }
+        case 'CLEAR':
+            return {
+                ...httpState,
+                error: null
+            }
         default: throw new Error('Error in httpReducer, no case found ');
     }
 }

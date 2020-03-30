@@ -1,4 +1,4 @@
-import React, {useReducer, useCallback, useEffect} from 'react';
+import React, {useReducer, useState, useCallback, useEffect} from 'react';
 
 import IngredientForm from './IngredientForm';
 import Search from './Search';
@@ -13,7 +13,7 @@ import * as actions from '../../actions/index'
 
 function Ingredients() {
     const [userIngredients, dispatchIng] = useReducer(ingredientsReducer, []);
-    const {httpState, sendRequest} = useHttp();
+    const {httpState, clear, sendRequest} = useHttp();
     const {isLoading, error, responseData, extraData, reqIdentifier } = {...httpState}
 
     const addUserIngredient = useCallback(userIngredient => {
@@ -31,7 +31,6 @@ function Ingredients() {
      * useEffect [d1] second params -- componentDidUpdate - on every re-render - cleanUp on update, not first
      */
     useEffect(() => {
-        console.log('EFT ', !extraData);
         if(!isLoading && extraData && reqIdentifier === "REMOVE_INGREDIENT"){
             dispatchIng(actions.deleteIngredient(extraData))
         } else if(!isLoading && extraData && extraData.title && responseData && reqIdentifier === "ADD_INGREDIENT") {
@@ -52,7 +51,7 @@ function Ingredients() {
         //     setError("Error removing ingredient with id ", ingId)
         // })
         sendRequest(
-            `https://react-hooks-cb963.firebaseio.com/ingredients/${ingId}.json`,
+            `https://react-hooks-cb963.firebaseio.com/ingredients/${ingId}.son`,
             "DELETE",
             null,
             ingId,
@@ -64,21 +63,6 @@ function Ingredients() {
             dispatchIng(actions.setIngredient(ingList))
     }, [])
 
-    const onCloseModal = useCallback(() => {
-        // dispatchHttp(actions.setError(null));
-    },[])
-
-    const setIsLoading = useCallback((loadingStatus) => {
-        // dispatchHttp(actions.setLoading(loadingStatus));
-    }, [])
-
-    const setError = useCallback((err, options) => {
-        if(options){
-            // dispatchHttp(actions.setError(err, options));
-        } else {
-            // dispatchHttp(actions.setError(err));
-        }
-    }, [])
 
     // const ingredientsList = useMemo(() => {
     //     return <IngredientList ingredients={userIngredients} onRemoveItem={(id) => removeIngredient(id)}/>
@@ -86,11 +70,11 @@ function Ingredients() {
 
     return (
         <div className="App">
-            {error && <ErrorModal onClose={onCloseModal}>{error}</ErrorModal>  }
-            <IngredientForm setError={setError} isLoading={isLoading} addUserIngredient={addUserIngredient}/>
+            {error && <ErrorModal onClose={clear}>{error}</ErrorModal>  }
+            <IngredientForm addUserIngredient={addUserIngredient}/>
 
             <section>
-                <Search setIsLoading={setIsLoading} setError={setError} setUserIngredients={filteredIng}/>
+                <Search setUserIngredients={filteredIng}/>
                 {/*{ingredientsList}*/}
                 <IngredientList ingredients={userIngredients} onRemoveItem={removeIngredient}/>
             </section>
