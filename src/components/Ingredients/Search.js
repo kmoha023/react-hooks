@@ -4,6 +4,7 @@ import Card from '../UI/Card';
 import './Search.css';
 import useHttp from "../../hooks/useHttp";
 import ErrorModal from "../UI/ErrorModal";
+import LoadingIndicator from "../UI/LoadingIndicator";
 
 const Search = React.memo(props => {
     const {httpState, clear, sendRequest} = useHttp();
@@ -104,7 +105,7 @@ const Search = React.memo(props => {
       <Card>
         <div className="search-input">
           <label>Filter by Title</label>
-            {isLoading && <span>Loading...</span>}
+            {isLoading && <LoadingIndicator/>}
           <input type="text" value={filterTitle} ref={inputRef}  onChange={event => setFilterTitle(event.target.value)}/>
         </div>
       </Card>
